@@ -1,0 +1,39 @@
+@import "../../../resources/css-variables.scss";
+
+header {
+  height: 54px;
+  background-color: $header-background-color;
+  position: fixed;
+  width: 100%;
+  z-index: 5;
+}
+
+.title {
+  & > a {
+    color: $header-text-color;
+    text-decoration: none;
+  }
+
+  & svg {
+    margin-right: 10px;
+  }
+}
+
+.buttons {
+  padding-top: 13px;
+  text-align: right;
+}
+
+.link {
+  color: $header-text-color;
+
+  &:hover {
+    color: $header-text-hover-color;
+  }
+}
+
+.mobileLink {
+  display: block;
+  margin: 5px 15px;
+  color: #1976d2;
+}

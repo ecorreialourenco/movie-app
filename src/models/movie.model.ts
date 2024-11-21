@@ -23,6 +23,12 @@ export interface MovieParams {
   selectedGenre?: string | null;
 }
 
+export interface SearchMovieParams {
+  page: number;
+  showAdultContent?: boolean;
+  query?: string | null;
+}
+
 export interface Company {
   id: number;
   name: string;

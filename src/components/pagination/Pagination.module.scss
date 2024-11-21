@@ -1,0 +1,14 @@
+@import "../../resources/css-variables.scss";
+
+.pagination {
+  height: 60px;
+  justify-content: center;
+}
+
+.prevButton {
+  margin-right: 10px;
+}
+
+.nextButton {
+  margin-left: 10px;
+}

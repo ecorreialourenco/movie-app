@@ -1,121 +1,118 @@
 import { useEffect, useState } from "react";
-import { Dropdown, Row, Col, ToggleButton } from "react-bootstrap";
-import { v4 as uuidv4 } from "uuid";
 import { sortOptions } from "../../variables/sortOptions";
 import { Options } from "../../models/options.model";
-import { Genres } from "../../models/gengers.model";
-import { FiltersProps } from "../../models/generic.model";
-import "./Filters.scss";
+import { getMovieGenresList } from "../../utils/getMovieList";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import {
+  setAdultContent,
+  setGenresList,
+  setSelectedGenre,
+  setSortBy,
+} from "../../store/slices/movieStore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAngleDoubleDown,
+  faAngleDoubleUp,
+} from "@fortawesome/free-solid-svg-icons";
+import cn from "classnames";
+import styles from "./Filters.module.scss";
+import {
+  Autocomplete,
+  FormControlLabel,
+  Switch,
+  TextField,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { Backdrop } from "../Backdrop";
+import { Col, Row } from "../grid";
 
-const Filters: React.FC<FiltersProps> = (props) => {
-  const [showAdultContent, setShowAdultContent] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<string | null>("");
-  const [genresList, setGenresList] = useState<Options[]>([]);
-  const [selectedGenre, setSelectedGenre] = useState<string | null>("");
+export const Filters: React.FC = () => {
+  const [showFilters, setSHowFilters] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const { showAdultContent, sortBy, genresList, selectedGenre } = useSelector(
+    (state: RootState) => state.movie
+  );
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const getGenres = async () => {
-      const url = process.env.REACT_APP_API_URL;
-      const apiKey = process.env.REACT_APP_API_KEY;
-
-      await fetch(`${url}/genre/movie/list?api_key=${apiKey}`)
-        .then(async (res) => {
-          const { genres } = await res.json();
-          let genresOptions: Options[] = [
-            {
-              value: "",
-              label: "None",
-            },
-          ];
-          genres.forEach((item: Genres) => {
-            genresOptions.push({
-              value: item.id.toString(),
-              label: item.name,
-            });
-          });
-
-          setGenresList(genresOptions);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+      const genresOptions = await getMovieGenresList();
+      dispatch(setGenresList(genresOptions));
     };
 
-    getGenres();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    props.onChange(showAdultContent, sortBy, selectedGenre);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAdultContent, sortBy, selectedGenre]);
+    !genresList.length && getGenres();
+  }, [genresList, dispatch]);
 
   return (
-    <Row className="filters-container">
-      <Col>
-        <Row>
-          <Col>Show Adult content</Col>
-          <Col>
-            <ToggleButton
-              className="mb-2 filters__checkbox"
-              id="toggle-check"
-              type="checkbox"
-              checked={showAdultContent}
-              value="1"
-              onChange={(e) => setShowAdultContent(e.currentTarget.checked)}
-            >
-              {showAdultContent ? "Yes" : "No"}
-            </ToggleButton>
+    <>
+      <div className={styles.filterDiv}>
+        <Row
+          className={cn(styles.filters, {
+            [styles.hidden]: !showFilters,
+            [styles.mobile]: isMobile,
+          })}
+        >
+          <Col xs={12} sm={6} md={5}>
+            <FormControlLabel
+              value={showAdultContent}
+              control={
+                <Switch
+                  color="primary"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    dispatch(setAdultContent(e.currentTarget.checked))
+                  }
+                />
+              }
+              label="Show Adult content"
+              labelPlacement="start"
+            />
+          </Col>
+          <Col xs={6} sm={3} md={3} className={styles.autocomplete}>
+            <Autocomplete
+              disablePortal
+              size="small"
+              value={sortBy}
+              options={sortOptions}
+              onChange={(event: any, newValue: Options) => {
+                dispatch(setSortBy(newValue));
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Sort by:" />
+              )}
+            />
+          </Col>
+          <Col xs={6} sm={3} md={4} className={cn(styles.autocomplete, styles.marginRight)}>
+            <Autocomplete
+              disablePortal
+              size="small"
+              value={selectedGenre}
+              options={genresList}
+              onChange={(event: any, newValue: Options) => {
+                dispatch(setSelectedGenre(newValue));
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Sort by Genre:" />
+              )}
+            />
           </Col>
         </Row>
-      </Col>
-      <Col md="3">
-        <Row>
-          <Col>Sort by:</Col>
-          <Col>
-            <Dropdown onSelect={(e) => setSortBy(e)} className="filters__btn">
-              <Dropdown.Toggle>{sortBy}</Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                {sortOptions.map((item: Options) => (
-                  <Dropdown.Item key={uuidv4()} eventKey={item.value}>
-                    {item.label}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Col>
-        </Row>
-      </Col>
-      <Col md="4">
-        <Row>
-          <Col>Sort by Genre:</Col>
-          <Col>
-            <Dropdown
-              onSelect={(e) => setSelectedGenre(e)}
-              className="filters__btn"
-            >
-              <Dropdown.Toggle>
-                {!!selectedGenre && genresList.length
-                  ? genresList.find(
-                      (item: Options) => item.value === selectedGenre
-                    )?.label
-                  : ""}
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                {genresList.map((item: Options) => (
-                  <Dropdown.Item key={uuidv4()} eventKey={item.value}>
-                    {item.label}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Col>
-        </Row>
-      </Col>
-    </Row>
+        <div
+          className={styles.toggleButton}
+          onClick={() => setSHowFilters(!showFilters)}
+        >
+          <FontAwesomeIcon
+            icon={showFilters ? faAngleDoubleUp : faAngleDoubleDown}
+          />
+          {showFilters ? "Hide Filters" : "Show Filters"}
+          <FontAwesomeIcon
+            icon={showFilters ? faAngleDoubleUp : faAngleDoubleDown}
+          />
+        </div>
+      </div>
+      {showFilters && <Backdrop />}
+    </>
   );
 };
-
-export default Filters;

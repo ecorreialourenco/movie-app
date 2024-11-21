@@ -1,0 +1,45 @@
+@import "../../resources/css-variables.scss";
+
+.checkbox {
+  background-color: $button-color !important;
+}
+
+div.filters.hidden {
+  height: 0;
+  transition: height 0.5s ease-out;
+  overflow: hidden;
+  padding: 0;
+}
+
+.filters {
+  height: 50px;
+  overflow: hidden;
+  transition: height 0.5s ease-in;
+
+  &.mobile {
+    height: 100px;
+    padding: 5px;
+  }
+}
+
+.filterDiv {
+  position: absolute;
+  z-index: 10;
+  padding-top: 10px;
+  background-color: white;
+  width: 100%;
+}
+
+.toggleButton {
+  width: 100%;
+  text-align: center;
+  padding: 7px;
+}
+
+div.autocomplete {
+  padding: 8px;
+}
+
+div.marginRight {
+  padding-right: 24px;
+}

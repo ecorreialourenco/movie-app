@@ -9,12 +9,10 @@ export interface ListItemsProps {
   list: any[];
 }
 
-export interface FiltersProps {
-  onChange: (
-    showAdultContent: boolean,
-    sortBy: string | null,
-    selectedGenre: string | null
-  ) => void;
+export interface FiltersParamsProps {
+  showAdultContent: boolean;
+  sortBy: string | null;
+  selectedGenre: string | null;
 }
 
 export interface ImageCarouselProps {

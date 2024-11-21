@@ -1,0 +1,9 @@
+@import "../../../resources/css-variables.scss";
+
+.rate {
+  text-align: center;
+}
+
+.errorMessage {
+  color: $error-text-color;
+}

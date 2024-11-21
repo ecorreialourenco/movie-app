@@ -1,14 +1,10 @@
-import Header from "./Header";
 import { LayoutProps } from "../../models/generic.model";
-import "./Layout.scss";
+import { Header } from "./Header";
+import styles from "./Layout.module.scss";
 
-const Layout: React.FC<LayoutProps> = (props) => {
-  return (
-    <div>
-      <Header />
-      <div className="layout-container">{props.children}</div>
-    </div>
-  );
-};
-
-export default Layout;
+export const Layout: React.FC<LayoutProps> = ({ children }) => (
+  <>
+    <Header />
+    <div className={styles.container}>{children}</div>
+  </>
+);

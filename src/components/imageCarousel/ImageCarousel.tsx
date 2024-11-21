@@ -1,30 +1,26 @@
-import Image from "../image/Image";
 import { v4 as uuidv4 } from "uuid";
 import { MovieProps } from "../../models/movie.model";
 import { Link } from "react-router-dom";
-import Carousel from "react-multi-carousel";
-import { responsive } from "../../variables/responsive";
 import { ImageCarouselProps } from "../../models/generic.model";
-
-import "./ImageCarousel.scss";
+import { Image } from "../Image/Image";
+import { responsive } from "../../variables/responsive";
+import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import styles from "./ImageCarousel.module.scss";
 
-const ImageCarousel: React.FC<ImageCarouselProps> = (props) => {
-  const { list } = props;
-
+export const ImageCarousel: React.FC<ImageCarouselProps> = ({ list }) => {
   return (
-    <Carousel responsive={responsive}>
+    <Carousel
+      responsive={responsive}
+      containerClass={styles.carousel}
+      showDots={true}
+      infinite={true}
+    >
       {list.map((item: MovieProps) => (
         <Link to={`/detail/${item.id}`} key={uuidv4()}>
-          <Image
-            url={item.poster_path}
-            alt={item.title}
-            className="carousel-image"
-          />
+          <Image url={item.poster_path} alt={item.title} />
         </Link>
       ))}
     </Carousel>
   );
 };
-
-export default ImageCarousel;

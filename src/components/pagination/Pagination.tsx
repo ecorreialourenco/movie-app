@@ -1,40 +1,39 @@
-import { Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PaginationProps } from "../../models/pagination.model";
 import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import "./Pagination.scss";
+import { Col, Row } from "../grid";
+import { Button } from "@mui/material";
+import styles from "./Pagination.module.scss";
 
-const Pagination: React.FC<PaginationProps> = (props) => {
-  const { page, onChange, totalPages } = props;
-
-  return (
-    <Row className="pagination">
-      <Col>
-        <button
-          className="pagination__btn pagination__previous"
-          onClick={() => onChange(page - 1)}
-          disabled={page === 1}
-        >
-          <FontAwesomeIcon icon={faChevronLeft} />
-          Previous
-        </button>
-        <span className="pagination__info">
-          {page} of {totalPages}
-        </span>
-        <button
-          className="pagination__btn pagination__next"
-          onClick={() => onChange(page + 1)}
-          disabled={page === totalPages}
-        >
-          Next
-          <FontAwesomeIcon icon={faChevronRight} />
-        </button>
-      </Col>
-    </Row>
-  );
-};
-
-export default Pagination;
+export const Pagination: React.FC<PaginationProps> = ({
+  page,
+  onChange,
+  totalPages,
+}) => (
+  <Row className={styles.pagination}>
+    <Col>
+      <Button
+        className={styles.prevButton}
+        onClick={() => onChange(page - 1)}
+        disabled={page === 1}
+      >
+        <FontAwesomeIcon icon={faChevronLeft} />
+        Previous
+      </Button>
+      <span className={styles.info}>
+        {page} of {totalPages}
+      </span>
+      <Button
+        className={styles.nextButton}
+        onClick={() => onChange(page + 1)}
+        disabled={page === totalPages}
+      >
+        Next
+        <FontAwesomeIcon icon={faChevronRight} />
+      </Button>
+    </Col>
+  </Row>
+);

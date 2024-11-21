@@ -1,38 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
-import Layout from "./components/layout/Layout";
+import { Layout } from "./components";
 import Router from "./router/routes";
-import { CredentialsContext } from "./store/context";
-import "./App.css";
+import { useDispatch } from "react-redux";
+import { setSession } from "./store/slices/credentialsStore";
+import { getSession } from "./utils/getSession";
+import styles from "./App.module.scss";
 
 function App() {
-  const [session, setSession] = useState<string>("Admin");
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const getSession = async () => {
-      const url = process.env.REACT_APP_API_URL;
-      const apiKey = process.env.REACT_APP_API_KEY;
-
-      await fetch(`${url}/authentication/guest_session/new?api_key=${apiKey}`)
-        .then(async (res) => {
-          const item = await res.json();
-          setSession(item.guest_session_id);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+    const getSessionData = async () => {
+      const session = await getSession();
+      dispatch(setSession(session));
     };
 
-    getSession();
-  }, []);
+    getSessionData();
+  }, [dispatch]);
 
   return (
-    <div className="App" style={{ width: "100%" }}>
+    <div className={styles.container}>
       <BrowserRouter>
         <Layout>
-          <CredentialsContext.Provider value={{ session, setSession }}>
-            <Router />
-          </CredentialsContext.Provider>
+          <Router />
         </Layout>
       </BrowserRouter>
     </div>
